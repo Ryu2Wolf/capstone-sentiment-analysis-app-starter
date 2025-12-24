@@ -1,12 +1,87 @@
 <!DOCTYPE html>
 <html>
     <head>
-        <title>Sentiment Analysis</title>
+        <title>SentimentScope - Sentiment Analyzer</title>
+        <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
     </head>
     <body>
-        <form method="POST">
-            <textarea name="user_text" rows="5"></textarea>
-            <input type="submit" value="Analyze Text">
-        </form>
+        <div class="container">
+            <header>
+                <h1>🔍 SentimentScope</h1>
+                <p class="subtitle">Analyze Customer Sentiment with AI</p>
+            </header>
+
+            <div class="analyzer-section">
+                <form method="POST">
+                    <label for="user_text">Enter text to analyze:</label>
+                    <textarea name="user_text" id="user_text" rows="5" placeholder="Type or paste your text here..."></textarea>
+                    <button type="submit" class="analyze-btn">Analyze Sentiment</button>
+                </form>
+            </div>
+
+            {% if sentiment %}
+                <div class="results-section">
+                    <h2>Analysis Results</h2>
+                    
+                    <div class="model-results">
+                        <div class="model-card vader">
+                            <h3>VADER Analysis</h3>
+                            <div class="score-grid">
+                                <div class="score-item positive">
+                                    <div class="bar-container">
+                                        <span class="label">Positive</span>
+                                        <div class="bar-wrapper">
+                                            <div class="bar bar-positive" style="--bar-width: {{ sentiment['pos'] * 100 }}%"></div>
+                                        </div>
+                                        <span class="value">{{ "%.1f" | format(sentiment['pos'] * 100) }}%</span>
+                                    </div>
+                                </div>
+                                <div class="score-item negative">
+                                    <div class="bar-container">
+                                        <span class="label">Negative</span>
+                                        <div class="bar-wrapper">
+                                            <div class="bar bar-negative" style="--bar-width: {{ sentiment['neg'] * 100 }}%"></div>
+                                        </div>
+                                        <span class="value">{{ "%.1f" | format(sentiment['neg'] * 100) }}%</span>
+                                    </div>
+                                </div>
+                                <div class="score-item neutral">
+                                    <div class="bar-container">
+                                        <span class="label">Neutral</span>
+                                        <div class="bar-wrapper">
+                                            <div class="bar bar-neutral" style="--bar-width: {{ sentiment['neu'] * 100 }}%"></div>
+                                        </div>
+                                        <span class="value">{{ "%.1f" | format(sentiment['neu'] * 100) }}%</span>
+                                    </div>
+                                </div>
+                                <div class="score-item compound">
+                                    <div class="bar-container">
+                                        <span class="label">Compound</span>
+                                        <div class="bar-wrapper">
+                                            <div class="bar bar-compound" style="--bar-width: {{ (sentiment['compound'] + 1) * 50 }}%"></div>
+                                        </div>
+                                        <span class="value">{{ "%.1f" | format(sentiment['compound'] * 100) }}%</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="model-card custom">
+                            <h3>Custom Keras Model</h3>
+                            <div class="custom-score">
+                                <div class="pie-chart" style="--percentage: {{ sentiment['custom model positive'] * 100 }}">
+                                    <span class="percentage">{{ "%.0f" | format(sentiment['custom model positive'] * 100) }}%</span>
+                                </div>
+                                <p class="score-label">Positive Confidence</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            {% endif %}
+
+            <footer>
+                <p>Powered by VADER & Custom Neural Network</p>
+            </footer>
+        </div>
     </body>
 </html>
